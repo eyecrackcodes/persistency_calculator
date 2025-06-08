@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demographic Persistency Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+        
+        .input-section {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .results-section {
+            padding: 40px;
+            background: white;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .range-container {
+            position: relative;
+            margin-top: 10px;
+        }
+        
+        .range-input {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #e1e5e9;
+            outline: none;
+        }
+        
+        .range-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+        }
+        
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .age-display {
+            background: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .zone-card {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid;
+            text-align: center;
+        }
+        
+        .zone-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .zone-description {
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .premium-range {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .monthly-range {
+            font-size: 1.1em;
+            color: #666;
+        }
+        
+        .persistency-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .persistency-percentage {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .persistency-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .demo-info {
+            background: #f1f2f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .demo-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            font-size: 0.9em;
+        }
+        
+        .demo-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .carrier-recommendation {
+            background: #e8f5e8;
+            border: 2px solid #27ae60;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .carrier-title {
+            color: #27ae60;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .carrier-details {
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .input-section,
+            .results-section {
+                padding: 25px;
+            }
+        }
+        
+        .goldilocks { border-color: #27ae60; background-color: #e8f5e8; }
+        .high-volume { border-color: #f39c12; background-color: #fef9e7; }
+        .premium { border-color: #9b59b6; background-color: #f4ecf7; }
+        .luxury { border-color: #e91e63; background-color: #fce4ec; }
+        .budget { border-color: #95a5a6; background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Demographic Persistency Calculator</h1>
+            <p>Optimize premium recommendations using ZIP code demographics and census data</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2 style="margin-bottom: 30px; color: #2c3e50;">Prospect Information</h2>
+                
+                <div class="form-group">
+                    <label for="zipInput">ZIP Code</label>
+                    <input type="text" id="zipInput" placeholder="Enter any ZIP code (e.g., 90210)" maxlength="5" pattern="[0-9]{5}" onchange="handleZipInput()" oninput="handleZipInput()">
+                    <div style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        Or select from common examples:
+                    </div>
+                    <select id="zipCode" onchange="handleZipSelect()" style="margin-top: 8px;">
+                        <option value="">Select example ZIP...</option>
+                        <option value="75205">75205 - Dallas, TX ($95k median)</option>
+                        <option value="90210">90210 - Beverly Hills, CA ($125k median)</option>
+                        <option value="10021">10021 - New York, NY ($142k median)</option>
+                        <option value="30309">30309 - Atlanta, GA ($88k median)</option>
+                        <option value="60614">60614 - Chicago, IL ($92k median)</option>
+                        <option value="78704">78704 - Austin, TX ($78k median)</option>
+                        <option value="85251">85251 - Scottsdale, AZ ($68k median)</option>
+                        <option value="33176">33176 - Miami, FL ($72k median)</option>
+                        <option value="45202">45202 - Cincinnati, OH ($52k median)</option>
+                        <option value="48201">48201 - Detroit, MI ($48k median)</option>
+                        <option value="39201">39201 - Jackson, MS ($38k median)</option>
+                        <option value="25701">25701 - Huntington, WV ($32k median)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <div class="age-display" id="ageDisplay">45 years old</div>
+                    <div class="range-container">
+                        <input type="range" id="age" class="range-input" min="25" max="80" value="45" onchange="updateAge(); calculateRecommendations()">
+                        <div class="range-labels">
+                            <span>25</span>
+                            <span>80</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="actualIncome">Actual Income (Optional)</label>
+                    <input type="number" id="actualIncome" placeholder="Leave blank to use ZIP median" onchange="calculateRecommendations()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="coverage">Desired Coverage</label>
+                    <select id="coverage" onchange="calculateRecommendations()">
+                        <option value="25000">$25,000</option>
+                        <option value="50000">$50,000</option>
+                        <option value="75000">$75,000</option>
+                        <option value="100000" selected>$100,000</option>
+                        <option value="150000">$150,000</option>
+                        <option value="200000">$200,000</option>
+                        <option value="250000">$250,000</option>
+                    </select>
+                </div>
+                
+                <button class="calculate-btn" onclick="calculateRecommendations()">
+                    📊 Calculate Recommendations
+                </button>
+            </div>
+            
+            <div class="results-section">
+                <h2 style="margin-bottom: 30px; color: #2c3e50;">Analysis & Recommendations</h2>
+                
+                <div class="demo-info">
+                    <h3>📍 Demographic Profile</h3>
+                    <div class="demo-grid">
+                        <div class="demo-item">
+                            <span>Location:</span>
+                            <span id="location">Dallas, TX</span>
+                        </div>
+                        <div class="demo-item">
+                            <span>Region:</span>
+                            <span id="region">South</span>
+                        </div>
+                        <div class="demo-item">
+                            <span>Median Income:</span>
+                            <span id="medianIncome">$95,000</span>
+                        </div>
+                        <div class="demo-item">
+                            <span>Education:</span>
+                            <span id="education">College</span>
+                        </div>
+                        <div class="demo-item">
+                            <span>Using Income:</span>
+                            <span id="usingIncome">$95,000</span>
+                        </div>
+                        <div class="demo-item">
+                            <span>Category:</span>
+                            <span id="category">Upper Middle</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="zone-card" id="zoneCard">
+                    <div class="zone-title" id="zoneTitle">UPPER MIDDLE ZONE</div>
+                    <div class="zone-description" id="zoneDescription">Balanced approach between premium and affordability</div>
+                    <div class="premium-range" id="premiumRange">$800 - $1,800</div>
+                    <div class="monthly-range" id="monthlyRange">$65 - $150 monthly</div>
+                </div>
+                
+                <div class="persistency-card">
+                    <div class="persistency-percentage" id="persistencyPercentage">57.1%</div>
+                    <div class="persistency-label">Predicted Persistency Rate</div>
+                    <div style="margin-top: 10px; font-size: 0.9em; opacity: 0.9;">
+                        <span id="affordabilityPercentage">1.8%</span> of income
+                    </div>
+                </div>
+                
+                <div class="carrier-recommendation">
+                    <div class="carrier-title">🏢 Carrier Strategy</div>
+                    <div class="carrier-details">
+                        <strong>Primary:</strong> <span id="primaryCarrier">GTL for higher end, mixed approach</span><br>
+                        <strong>Secondary:</strong> <span id="secondaryCarrier">American Amicable for budget conscious</span><br>
+                        <strong>Strategy:</strong> <span id="strategy">Balance premium and value positioning</span>
+                    </div>
+                </div>
+                
+                <div id="warningBox" class="warning-box" style="display: none;">
+                    ⚠️ <span id="warningText">Consider reducing coverage for better affordability</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Extended ZIP code demographic data with income estimation algorithm
+        const zipCodeData = {
+            "90210": { medianIncome: 125000, avgAge: 45, education: "College", region: "West", city: "Beverly Hills, CA" },
+            "10021": { medianIncome: 142000, avgAge: 42, education: "College", region: "Northeast", city: "New York, NY" },
+            "75205": { medianIncome: 95000, avgAge: 41, education: "College", region: "South", city: "Dallas, TX" },
+            "30309": { medianIncome: 88000, avgAge: 39, education: "College", region: "South", city: "Atlanta, GA" },
+            "60614": { medianIncome: 92000, avgAge: 36, education: "College", region: "Midwest", city: "Chicago, IL" },
+            "78704": { medianIncome: 78000, avgAge: 33, education: "College", region: "South", city: "Austin, TX" },
+            "85251": { medianIncome: 68000, avgAge: 45, education: "Some College", region: "West", city: "Scottsdale, AZ" },
+            "33176": { medianIncome: 72000, avgAge: 47, education: "Some College", region: "South", city: "Miami, FL" },
+            "45202": { medianIncome: 52000, avgAge: 38, education: "High School", region: "Midwest", city: "Cincinnati, OH" },
+            "48201": { medianIncome: 48000, avgAge: 41, education: "High School", region: "Midwest", city: "Detroit, MI" },
+            "39201": { medianIncome: 38000, avgAge: 39, education: "High School", region: "South", city: "Jackson, MS" },
+            "25701": { medianIncome: 32000, avgAge: 45, education: "High School", region: "South", city: "Huntington, WV" }
+        };
+        
+        // Function to estimate demographics for unknown ZIP codes
+        function estimateZipDemographics(zipCode) {
+            // Basic regional and income estimation based on ZIP code patterns
+            const firstDigit = zipCode.charAt(0);
+            const firstTwo = zipCode.substring(0, 2);
+            
+            let region, baseIncome, education, avgAge;
+            
+            // Regional estimation based on ZIP code prefixes
+            if (firstDigit === '0' || firstDigit === '1') {
+                region = "Northeast";
+                baseIncome = 65000; // Higher baseline for Northeast
+            } else if (firstDigit === '2' || firstDigit === '3') {
+                region = "South";
+                baseIncome = 55000; // Moderate baseline for South
+            } else if (firstDigit === '4' || firstDigit === '5' || firstDigit === '6') {
+                region = "Midwest";
+                baseIncome = 58000; // Moderate baseline for Midwest
+            } else if (firstDigit === '7' || firstDigit === '8' || firstDigit === '9') {
+                region = "West";
+                baseIncome = 68000; // Higher baseline for West
+            } else {
+                region = "Unknown";
+                baseIncome = 55000; // National average fallback
+            }
+            
+            // Income adjustments based on specific patterns
+            if (firstTwo === '90' || firstTwo === '94' || firstTwo === '10' || firstTwo === '02') {
+                baseIncome *= 1.4; // High-income metro areas
+                education = "College";
+            } else if (firstTwo === '60' || firstTwo === '75' || firstTwo === '30' || firstTwo === '98') {
+                baseIncome *= 1.2; // Upper-middle metro areas
+                education = "College";
+            } else if (firstTwo === '85' || firstTwo === '33' || firstTwo === '80' || firstTwo === '27') {
+                baseIncome *= 1.0; // Average metro areas
+                education = "Some College";
+            } else if (firstTwo === '45' || firstTwo === '48' || firstTwo === '38' || firstTwo === '74') {
+                baseIncome *= 0.85; // Lower-middle areas
+                education = "High School";
+            } else {
+                baseIncome *= 0.9; // Conservative estimate
+                education = "Some College";
+            }
+            
+            // Age estimation (fairly consistent across regions)
+            avgAge = 42;
+            
+            // Apply regional cost of living
+            const regionalMultipliers = {
+                "Northeast": 1.25,
+                "West": 1.35,
+                "South": 0.95,
+                "Midwest": 0.90
+            };
+            
+            baseIncome *= (regionalMultipliers[region] || 1.0);
+            
+            return {
+                medianIncome: Math.round(baseIncome),
+                avgAge: avgAge,
+                education: education,
+                region: region,
+                city: `ZIP ${zipCode} Area`,
+                estimated: true
+            };
+        }
+        
+        function handleZipInput() {
+            const zipInput = document.getElementById('zipInput');
+            const zipValue = zipInput.value.trim();
+            
+            // Clear dropdown selection when typing
+            document.getElementById('zipCode').value = '';
+            
+            if (zipValue.length === 5 && /^\d{5}$/.test(zipValue)) {
+                calculateRecommendations();
+            }
+        }
+        
+        function handleZipSelect() {
+            const zipSelect = document.getElementById('zipCode');
+            const zipInput = document.getElementById('zipInput');
+            
+            if (zipSelect.value) {
+                zipInput.value = zipSelect.value;
+                calculateRecommendations();
+            }
+        }
+        
+        function getCurrentZipCode() {
+            const zipInput = document.getElementById('zipInput').value.trim();
+            const zipSelect = document.getElementById('zipCode').value;
+            
+            return zipInput || zipSelect || '75205'; // Default fallback
+        }
+        
+        function updateAge() {
+            const age = document.getElementById('age').value;
+            document.getElementById('ageDisplay').textContent = age + ' years old';
+        }
+        
+        function getIncomeCategory(income) {
+            if (income >= 100000) return { category: "Premium", optimalRange: [1500, 3000], persistencyBoost: 15 };
+            if (income >= 75000) return { category: "Upper Middle", optimalRange: [800, 1800], persistencyBoost: 8 };
+            if (income >= 55000) return { category: "Middle", optimalRange: [500, 1200], persistencyBoost: 3 };
+            if (income >= 40000) return { category: "Lower Middle", optimalRange: [300, 700], persistencyBoost: -2 };
+            return { category: "Limited", optimalRange: [200, 500], persistencyBoost: -8 };
+        }
+        
+        function getAgeAdjustment(age) {
+            if (age < 35) return { affordability: 0.7, persistency: -15 };
+            if (age < 45) return { affordability: 0.85, persistency: -5 };
+            if (age < 55) return { affordability: 1.0, persistency: 0 };
+            if (age < 65) return { affordability: 1.1, persistency: 5 };
+            if (age < 75) return { affordability: 0.9, persistency: 8 };
+            return { affordability: 0.8, persistency: 12 };
+        }
+        
+        function getEducationBoost(education) {
+            const boosts = {
+                "Graduate": 8,
+                "College": 3,
+                "Some College": 0,
+                "High School": -5
+            };
+            return boosts[education] || 0;
+        }
+        
+        function getRegionalMultiplier(region) {
+            const multipliers = {
+                "Northeast": 1.25,
+                "West": 1.35,
+                "South": 0.95,
+                "Midwest": 0.90
+            };
+            return multipliers[region] || 1.0;
+        }
+        
+        function getCarrierRecommendation(zone, income) {
+            if (zone === "GOLDILOCKS") {
+                return {
+                    primary: "American Amicable",
+                    secondary: "Regional Carriers",
+                    strategy: "Competitive pricing in true sweet spot"
+                };
+            } else if (zone === "HIGH VOLUME") {
+                return {
+                    primary: "Mixed Approach - Enhanced Qualification",
+                    secondary: "Careful carrier selection",
+                    strategy: "Enhanced qualification and higher down payments required"
+                };
+            } else if (zone === "PREMIUM" || zone === "LUXURY") {
+                return {
+                    primary: "GTL",
+                    secondary: "SBLI",
+                    strategy: "Premium positioning and emphasize carrier strength"
+                };
+            } else {
+                return {
+                    primary: "Budget Carriers",
+                    secondary: "Simplified Issue Products",
+                    strategy: "Focus on affordability and final expense"
+                };
+            }
+        }
+        
+        function calculateRecommendations() {
+            const zipCode = getCurrentZipCode();
+            const age = parseInt(document.getElementById('age').value);
+            const actualIncome = document.getElementById('actualIncome').value;
+            const coverage = parseInt(document.getElementById('coverage').value);
+            
+            // Get ZIP data - use known data or estimate
+            let zipData = zipCodeData[zipCode];
+            if (!zipData) {
+                zipData = estimateZipDemographics(zipCode);
+            }
+            
+            const income = actualIncome ? parseInt(actualIncome) : zipData.medianIncome;
+            
+            const incomeCategory = getIncomeCategory(income);
+            const ageAdjustment = getAgeAdjustment(age);
+            const educationBoost = getEducationBoost(zipData.education);
+            const regionalMultiplier = getRegionalMultiplier(zipData.region);
+            
+            // Calculate optimal premium range
+            const baseOptimalMin = Math.round(incomeCategory.optimalRange[0] * ageAdjustment.affordability * regionalMultiplier);
+            const baseOptimalMax = Math.round(incomeCategory.optimalRange[1] * ageAdjustment.affordability * regionalMultiplier);
+            
+            // Calculate predicted persistency
+            const basePersistency = 49.1;
+            const totalPersistencyAdjustment = incomeCategory.persistencyBoost + ageAdjustment.persistency + educationBoost;
+            const predictedPersistency = Math.max(20, Math.min(80, basePersistency + totalPersistencyAdjustment));
+            
+            // Determine zone
+            const avgOptimal = (baseOptimalMin + baseOptimalMax) / 2;
+            let zone, zoneClass, zoneDescription;
+            
+            if (avgOptimal >= 200 && avgOptimal <= 499) {
+                zone = "GOLDILOCKS";
+                zoneClass = "goldilocks";
+                zoneDescription = "True Goldilocks Zone - Ideal persistency range";
+            } else if (avgOptimal >= 500 && avgOptimal <= 999) {
+                zone = "HIGH VOLUME";
+                zoneClass = "high-volume";
+                zoneDescription = "High Volume Zone - Requires careful qualification";
+            } else if (avgOptimal >= 1000 && avgOptimal <= 1999) {
+                zone = "PREMIUM";
+                zoneClass = "premium";
+                zoneDescription = "Premium Zone - High-value prospects";
+            } else if (avgOptimal >= 2000) {
+                zone = "LUXURY";
+                zoneClass = "luxury";
+                zoneDescription = "Luxury Zone - Affluent market";
+            } else {
+                zone = "BUDGET";
+                zoneClass = "budget";
+                zoneDescription = "Budget Zone - Limited options";
+            }
+            
+            const affordabilityPercentage = (avgOptimal / income * 100);
+            const monthlyMin = Math.round(baseOptimalMin / 12);
+            const monthlyMax = Math.round(baseOptimalMax / 12);
+            
+            const carrierRec = getCarrierRecommendation(zone, income);
+            
+            // Update UI
+            const locationText = zipData.estimated ? `${zipData.city} (Estimated)` : zipData.city;
+            document.getElementById('location').textContent = locationText;
+            document.getElementById('region').textContent = zipData.region;
+            document.getElementById('medianIncome').textContent = '$' + zipData.medianIncome.toLocaleString() + (zipData.estimated ? ' (Est.)' : '');
+            document.getElementById('education').textContent = zipData.education;
+            document.getElementById('usingIncome').textContent = '$' + income.toLocaleString();
+            document.getElementById('category').textContent = incomeCategory.category;
+            
+            const zoneCard = document.getElementById('zoneCard');
+            zoneCard.className = 'zone-card ' + zoneClass;
+            document.getElementById('zoneTitle').textContent = zone + ' ZONE';
+            document.getElementById('zoneDescription').textContent = zoneDescription;
+            document.getElementById('premiumRange').textContent = '$' + baseOptimalMin.toLocaleString() + ' - $' + baseOptimalMax.toLocaleString();
+            document.getElementById('monthlyRange').textContent = '$' + monthlyMin + ' - $' + monthlyMax + ' monthly';
+            
+            document.getElementById('persistencyPercentage').textContent = predictedPersistency.toFixed(1) + '%';
+            document.getElementById('affordabilityPercentage').textContent = affordabilityPercentage.toFixed(1) + '%';
+            
+            document.getElementById('primaryCarrier').textContent = carrierRec.primary;
+            document.getElementById('secondaryCarrier').textContent = carrierRec.secondary;
+            document.getElementById('strategy').textContent = carrierRec.strategy;
+            
+            // Show warning if coverage might be too high
+            const warningBox = document.getElementById('warningBox');
+            const maxAffordableCoverage = (baseOptimalMax / 50) * 1000; // Assuming $50/1000 average rate
+            if (coverage > maxAffordableCoverage) {
+                warningBox.style.display = 'block';
+                document.getElementById('warningText').textContent = `Consider reducing coverage to ${Math.round(maxAffordableCoverage/1000)*1000} for better affordability`;
+            } else {
+                warningBox.style.display = 'none';
+            }
+            
+            // Add estimation notice if needed
+            if (zipData.estimated) {
+                if (!document.getElementById('estimationNotice')) {
+                    const notice = document.createElement('div');
+                    notice.id = 'estimationNotice';
+                    notice.className = 'warning-box';
+                    notice.innerHTML = '📊 <strong>Estimated Demographics:</strong> This ZIP code uses estimated demographics based on regional patterns. For more accuracy, enter the actual income above.';
+                    document.querySelector('.demo-info').appendChild(notice);
+                }
+            } else {
+                const existingNotice = document.getElementById('estimationNotice');
+                if (existingNotice) {
+                    existingNotice.remove();
+                }
+            }
+        }
+        
+        // Initialize on page load
+        window.onload = function() {
+            updateAge();
+            // Set default ZIP code in input field
+            document.getElementById('zipInput').value = '75205';
+            calculateRecommendations();
+        };
+    </script>
+</body>
+</html>
